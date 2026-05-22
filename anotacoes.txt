@@ -2,7 +2,7 @@
 python3 -m venv venv
 
 - Ativar ambiente (Windows/Linux)
-venv\Scripts\activate  
+.\venv\Script\activate
 source venv/bin/activate
 
 - Instalar dependências
@@ -10,3 +10,25 @@ pip install -r requirements.txt
 
 - Rodar app
 python run.py
+
+
+- React
+npm install
+npm run dev
+
+-Uso das Branch-
+
+- Criar nova Branch
+git checkout -b nome-da-branch
+
+- Trocar/entrar numa Branch
+git switch -c nome-da-branch
+
+- Subir alterações na Branch
+git add .
+
+- Commitar na Branch
+git commit -m "mensagem"
+
+- Mesclar na Main (Acesse a Main e rode o comando)
+git commit -m "mensagem"
