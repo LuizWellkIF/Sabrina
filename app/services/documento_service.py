@@ -23,8 +23,9 @@ def criar(dados: dict, criador_id: int, id_setor: int):
         "id_categoria": dados.get("id_categoria"),
         "id_setor": id_setor,
         "criador": criador_id,
-        "embedding": embedding,
     }
+    if embedding is not None:
+        novo["embedding"] = embedding
     doc = documento_model.criar(novo)
     return doc, None
 
@@ -37,7 +38,9 @@ def atualizar(id_doc: int, id_setor: int, dados: dict):
         if doc_atual:
             titulo = dados.get("titulo", doc_atual["titulo"])
             conteudo = dados.get("conteudo", doc_atual["conteudo"])
-            atualizacao["embedding"] = gerar_embedding(f"{titulo} {conteudo}")
+            embedding = gerar_embedding(f"{titulo} {conteudo}")
+            if embedding is not None:
+                atualizacao["embedding"] = embedding
 
     doc = documento_model.atualizar(id_doc, id_setor, atualizacao)
     if not doc:

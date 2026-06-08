@@ -1,6 +1,7 @@
 from flask import Flask
 from app.config import Config
 from app.extensions import jwt, cors
+from app.routes.usuarios import usuarios_bp
 
 def create_app():
     app = Flask(__name__)
@@ -17,6 +18,7 @@ def create_app():
     from app.routes.agente import agente_bp
 
     app.register_blueprint(auth_bp,       url_prefix="/api/auth")
+    app.register_blueprint(usuarios_bp, url_prefix="/api/usuarios")
     app.register_blueprint(documentos_bp, url_prefix="/api/documentos")
     app.register_blueprint(categorias_bp, url_prefix="/api/categorias")
     app.register_blueprint(agente_bp,     url_prefix="/api/agente")
