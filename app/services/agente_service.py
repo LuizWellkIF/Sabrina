@@ -7,13 +7,16 @@ OLLAMA_URL = Config.OLLAMA_BASE_URL
 
 def gerar_embedding(texto: str) -> list:
     """Gera embedding via Ollama (nomic-embed-text, 768 dims)."""
-    res = requests.post(
-        f"{OLLAMA_URL}/api/embeddings",
-        json={"model": Config.OLLAMA_EMBED_MODEL, "prompt": texto},
-        timeout=30,
-    )
-    res.raise_for_status()
-    return res.json()["embedding"]
+    try:
+        res = requests.post(
+            f"{OLLAMA_URL}/api/embeddings",
+            json={"model": Config.OLLAMA_EMBED_MODEL, "prompt": texto},
+            timeout=30,
+        )
+        res.raise_for_status()
+        return res.json()["embedding"]
+    except requests.RequestException:
+        return None
 
 def _gerar_resposta(prompt: str) -> str:
     """Chama o modelo LLM do Ollama para gerar a resposta final."""
@@ -65,6 +68,11 @@ def perguntar(pergunta: str, id_setor: int, id_user: int):
     """
     # 1. Embedding da pergunta
     embedding_pergunta = gerar_embedding(pergunta)
+    if embedding_pergunta is None:
+        return {
+            "resposta": "Nao consegui acessar o servico de IA agora. Tente novamente quando o Ollama estiver em execucao.",
+            "documentos_consultados": [],
+        }
 
     # 2. Busca semântica — retorna os 5 docs mais relevantes do setor
     docs_relevantes = documento_model.buscar_por_similaridade(
