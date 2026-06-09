@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { Search, Clock } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import api from '../services/api'
 
-function CardDocumento({ doc, onClick }) {
+function CardDocumento({ doc, onClick, agora }) {
   const formatarData = (data) => {
-    const diff = Math.floor((Date.now() - new Date(data)) / 86400000)
+    const diff = Math.floor((agora - new Date(data)) / 86400000)
     if (diff === 0) return 'Hoje'
     if (diff === 1) return 'há 1 dia'
     return `há ${diff} dias`
@@ -40,10 +40,12 @@ function CardDocumento({ doc, onClick }) {
 export default function Dashboard() {
   const { usuario } = useAuth()
   const { categorias } = useOutletContext()
+  const [searchParams] = useSearchParams()
   const [documentos, setDocumentos] = useState([])
-  const [busca, setBusca] = useState('')
+  const [busca, setBusca] = useState(searchParams.get('busca') || '')
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null)
   const [carregando, setCarregando] = useState(true)
+  const [agora] = useState(() => Date.now())
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function Dashboard() {
     <div className="px-10 py-8 max-w-5xl">
       {/* Header */}
       <div className="mb-2 text-sm text-gray-500">
-        {usuario?.cargo}
+        {usuario?.cargo_nome}
       </div>
       <h1 className="text-4xl font-bold text-gray-900 mb-1">
         Olá, <em className="italic font-bold">{primeiroNome}.</em>
@@ -142,6 +144,7 @@ export default function Dashboard() {
             <CardDocumento
               key={doc.id_doc}
               doc={doc}
+              agora={agora}
               onClick={(id) => navigate(`/documento/${id}`)}
             />
           ))}

@@ -21,7 +21,7 @@ npm install -D tailwindcss @tailwindcss/vite
 
 npm run dev
 
--Uso das Branch-
+-= USO DAS BRANCH =-
 
 - Criar nova Branch
 git checkout -b nome-da-branch
@@ -35,5 +35,13 @@ git add .
 - Commitar na Branch
 git commit -m "mensagem"
 
-- Mesclar na Main (Acesse a Main e rode o comando)
-git commit -m "mensagem"
+- Enviar ao GitHub
+git push origin nome-da-branch
+
+- Acesse a Main e atualize
+git checkout main
+
+git pull origin main
+
+- Aplica o merge
+git merge feature/login
