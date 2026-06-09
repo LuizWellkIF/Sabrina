@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import auth_service
+from app.models import cargo as cargo_model
 from app.models import usuario as usuario_model
 
 auth_bp = Blueprint("auth", __name__)
@@ -38,4 +39,8 @@ def me():
     usuario = usuario_model.buscar_por_id(user_id)
     if not usuario:
         return jsonify({"erro": "Usuário não encontrado"}), 404
+    if usuario.get("id_cargo"):
+        claims = get_jwt()
+        cargo = cargo_model.buscar_por_id(usuario["id_cargo"], claims["id_setor"])
+        usuario["cargo_nome"] = cargo.get("nome") if cargo else None
     return jsonify(usuario), 200

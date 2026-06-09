@@ -36,7 +36,9 @@ export default function Sidebar({ categorias = [] }) {
         <div className="w-7 h-7 rounded-lg bg-[#0f4c5c] flex items-center justify-center mr-2">
           <BookOpen size={14} className="text-white" />
         </div>
-        <span className="font-semibold text-gray-900 text-sm tracking-tight">Sabrina</span>
+        <a href="/dashboard">
+          <span className="text-sm font-bold text-gray-900">Sabrina</span>
+        </a>
       </div>
 
       {/* Nav principal */}
@@ -107,7 +109,7 @@ export default function Sidebar({ categorias = [] }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">{usuario?.nome}</p>
-            <p className="text-xs text-gray-500 truncate">{usuario?.cargo}</p>
+            <p className="text-xs text-gray-500 truncate">{usuario?.cargo_nome}</p>
           </div>
           <button
             onClick={handleLogout}

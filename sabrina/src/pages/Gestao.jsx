@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import {
   BookOpen,
+  Briefcase,
   Check,
   FileText,
   Folder,
+  Building2,
   Pencil,
   Plus,
   RefreshCcw,
@@ -19,6 +21,8 @@ import api from '../services/api'
 const abas = [
   { id: 'documentos', label: 'Documentos', icon: FileText },
   { id: 'categorias', label: 'Categorias', icon: Folder },
+  { id: 'setores', label: 'Setores', icon: Building2 },
+  { id: 'cargos', label: 'Cargos', icon: Briefcase },
   { id: 'usuarios', label: 'Usuarios', icon: Users },
 ]
 
@@ -26,16 +30,20 @@ const documentoInicial = {
   titulo: '',
   resumo: '',
   conteudo: '',
+  id_cargo: '',
   id_categoria: '',
 }
 
 const categoriaInicial = { nome: '' }
+const cargoInicial = { nome: '', id_setor: '' }
+const setorInicial = { nome: '', descricao: '' }
 
 const usuarioInicial = {
   nome: '',
   email: '',
   senha: '',
-  cargo: '',
+  id_setor: '',
+  id_cargo: '',
   nivel_acesso: 1,
 }
 
@@ -71,10 +79,11 @@ function textareaClasses(extra = '') {
 
 export default function Gestao() {
   const { usuario } = useAuth()
-  const { categorias, setCategorias } = useOutletContext()
+  const { categorias, setCategorias, cargos, setCargos } = useOutletContext()
   const [abaAtiva, setAbaAtiva] = useState('documentos')
   const [documentos, setDocumentos] = useState([])
   const [usuarios, setUsuarios] = useState([])
+  const [setores, setSetores] = useState([])
   const [busca, setBusca] = useState('')
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
@@ -82,9 +91,13 @@ export default function Gestao() {
   const [erro, setErro] = useState('')
   const [docEditando, setDocEditando] = useState(null)
   const [catEditando, setCatEditando] = useState(null)
+  const [cargoEditando, setCargoEditando] = useState(null)
+  const [setorEditando, setSetorEditando] = useState(null)
   const [userEditando, setUserEditando] = useState(null)
   const [formDoc, setFormDoc] = useState(documentoInicial)
   const [formCat, setFormCat] = useState(categoriaInicial)
+  const [formCargo, setFormCargo] = useState(cargoInicial)
+  const [formSetor, setFormSetor] = useState(setorInicial)
   const [formUser, setFormUser] = useState(usuarioInicial)
 
   const podeGerenciarConteudo = Number(usuario?.nivel_acesso || 0) >= 5
@@ -94,18 +107,27 @@ export default function Gestao() {
     setCarregando(true)
     setErro('')
     try {
-      const requisicoes = [api.get('/documentos/'), api.get('/categorias/')]
-      if (podeGerenciarTudo) requisicoes.push(api.get('/usuarios/'))
-      const [docsRes, catsRes, usersRes] = await Promise.all(requisicoes)
+      const requisicoes = [
+        api.get('/documentos/'),
+        api.get('/categorias/'),
+        api.get(podeGerenciarTudo ? '/cargos/?todos=1' : '/cargos/'),
+      ]
+      if (podeGerenciarTudo) {
+        requisicoes.push(api.get('/usuarios/'))
+        requisicoes.push(api.get('/setores/'))
+      }
+      const [docsRes, catsRes, cargosRes, usersRes, setoresRes] = await Promise.all(requisicoes)
       setDocumentos(docsRes.data || [])
       setCategorias(catsRes.data || [])
+      setCargos(cargosRes.data || [])
       if (usersRes) setUsuarios(usersRes.data || [])
+      if (setoresRes) setSetores(setoresRes.data || [])
     } catch (err) {
       setErro(err.response?.data?.erro || 'Nao foi possivel carregar os dados de gestao.')
     } finally {
       setCarregando(false)
     }
-  }, [podeGerenciarTudo, setCategorias])
+  }, [podeGerenciarTudo, setCategorias, setCargos])
 
   useEffect(() => {
     Promise.resolve().then(() => carregarDados())
@@ -118,10 +140,32 @@ export default function Gestao() {
     }, {})
   }, [categorias])
 
+  const cargosPorId = useMemo(() => {
+    return cargos.reduce((acc, cargo) => {
+      acc[cargo.id_cargo] = cargo.nome
+      return acc
+    }, {})
+  }, [cargos])
+
+  const setoresPorId = useMemo(() => {
+    return setores.reduce((acc, setor) => {
+      acc[setor.id_setor] = setor.nome
+      return acc
+    }, {})
+  }, [setores])
+
+  const cargosDoSetorAtual = useMemo(() => {
+    return cargos.filter((cargo) => Number(cargo.id_setor) === Number(usuario?.id_setor))
+  }, [cargos, usuario?.id_setor])
+
+  const cargosDoSetorDoUsuario = useMemo(() => {
+    return cargos.filter((cargo) => Number(cargo.id_setor) === Number(formUser.id_setor))
+  }, [cargos, formUser.id_setor])
+
   const textoBusca = busca.trim().toLowerCase()
   const documentosFiltrados = documentos.filter((doc) => {
     if (!textoBusca) return true
-    return [doc.titulo, doc.resumo, categoriasPorId[doc.id_categoria]]
+    return [doc.titulo, doc.resumo, categoriasPorId[doc.id_categoria], cargosPorId[doc.id_cargo]]
       .filter(Boolean)
       .some((valor) => valor.toLowerCase().includes(textoBusca))
   })
@@ -130,9 +174,22 @@ export default function Gestao() {
     !textoBusca || cat.nome.toLowerCase().includes(textoBusca)
   ))
 
+  const cargosFiltrados = cargos.filter((cargo) => (
+    !textoBusca ||
+    cargo.nome.toLowerCase().includes(textoBusca) ||
+    cargo.setor_nome?.toLowerCase().includes(textoBusca) ||
+    setoresPorId[cargo.id_setor]?.toLowerCase().includes(textoBusca)
+  ))
+
+  const setoresFiltrados = setores.filter((setor) => (
+    !textoBusca ||
+    setor.nome.toLowerCase().includes(textoBusca) ||
+    setor.descricao?.toLowerCase().includes(textoBusca)
+  ))
+
   const usuariosFiltrados = usuarios.filter((item) => {
     if (!textoBusca) return true
-    return [item.nome, item.email, item.cargo]
+    return [item.nome, item.email, item.cargo_nome, item.setor_nome]
       .filter(Boolean)
       .some((valor) => valor.toLowerCase().includes(textoBusca))
   })
@@ -140,9 +197,13 @@ export default function Gestao() {
   const limparFormularios = () => {
     setDocEditando(null)
     setCatEditando(null)
+    setCargoEditando(null)
+    setSetorEditando(null)
     setUserEditando(null)
     setFormDoc(documentoInicial)
     setFormCat(categoriaInicial)
+    setFormCargo(cargoInicial)
+    setFormSetor(setorInicial)
     setFormUser(usuarioInicial)
   }
 
@@ -162,6 +223,7 @@ export default function Gestao() {
       titulo: doc.titulo || '',
       resumo: doc.resumo || '',
       conteudo: doc.conteudo || '',
+      id_cargo: doc.id_cargo || '',
       id_categoria: doc.id_categoria || '',
     })
 
@@ -171,6 +233,7 @@ export default function Gestao() {
           titulo: res.data.titulo || '',
           resumo: res.data.resumo || '',
           conteudo: res.data.conteudo || '',
+          id_cargo: res.data.id_cargo || '',
           id_categoria: res.data.id_categoria || '',
         })
       }).catch((err) => tratarErro(err, 'Nao foi possivel abrir o documento.'))
@@ -184,6 +247,7 @@ export default function Gestao() {
       titulo: formDoc.titulo.trim(),
       resumo: formDoc.resumo.trim(),
       conteudo: formDoc.conteudo.trim(),
+      id_cargo: formDoc.id_cargo ? Number(formDoc.id_cargo) : null,
       id_categoria: formDoc.id_categoria ? Number(formDoc.id_categoria) : null,
     }
 
@@ -201,6 +265,18 @@ export default function Gestao() {
       tratarErro(err, 'Nao foi possivel salvar o documento.')
     } finally {
       setSalvando(false)
+    }
+  }
+
+  const removerDocumento = async (doc) => {
+    if (!window.confirm(`Remover o documento "${doc.titulo}"?`)) return
+    try {
+      await api.delete(`/documentos/${doc.id_doc}`)
+      avisarSucesso('Documento removido.')
+      if (docEditando === doc.id_doc) limparFormularios()
+      await carregarDados()
+    } catch (err) {
+      tratarErro(err, 'Nao foi possivel remover o documento.')
     }
   }
 
@@ -242,13 +318,102 @@ export default function Gestao() {
     }
   }
 
+  const editarCargo = (cargo) => {
+    setCargoEditando(cargo.id_cargo)
+    setFormCargo({
+      nome: cargo.nome || '',
+      id_setor: cargo.id_setor || '',
+    })
+  }
+
+  const salvarCargo = async (event) => {
+    event.preventDefault()
+    setSalvando(true)
+    const payload = {
+      nome: formCargo.nome.trim(),
+      id_setor: formCargo.id_setor ? Number(formCargo.id_setor) : null,
+    }
+
+    try {
+      if (cargoEditando) {
+        await api.put(`/cargos/${cargoEditando}`, payload)
+        avisarSucesso('Cargo atualizado.')
+      } else {
+        await api.post('/cargos/', payload)
+        avisarSucesso('Cargo criado.')
+      }
+      limparFormularios()
+      await carregarDados()
+    } catch (err) {
+      tratarErro(err, 'Nao foi possivel salvar o cargo.')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  const removerCargo = async (cargo) => {
+    if (!window.confirm(`Remover o cargo "${cargo.nome}"?`)) return
+    try {
+      await api.delete(`/cargos/${cargo.id_cargo}`)
+      avisarSucesso('Cargo removido.')
+      await carregarDados()
+    } catch (err) {
+      tratarErro(err, 'Nao foi possivel remover o cargo.')
+    }
+  }
+
+  const editarSetor = (setor) => {
+    setSetorEditando(setor.id_setor)
+    setFormSetor({
+      nome: setor.nome || '',
+      descricao: setor.descricao || '',
+    })
+  }
+
+  const salvarSetor = async (event) => {
+    event.preventDefault()
+    setSalvando(true)
+    const payload = {
+      nome: formSetor.nome.trim(),
+      descricao: (formSetor.descricao || '').trim(),
+    }
+
+    try {
+      if (setorEditando) {
+        await api.put(`/setores/${setorEditando}`, payload)
+        avisarSucesso('Setor atualizado.')
+      } else {
+        await api.post('/setores/', payload)
+        avisarSucesso('Setor criado.')
+      }
+      limparFormularios()
+      await carregarDados()
+    } catch (err) {
+      tratarErro(err, 'Nao foi possivel salvar o setor.')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  const removerSetor = async (setor) => {
+    if (!window.confirm(`Remover o setor "${setor.nome}"?`)) return
+    try {
+      await api.delete(`/setores/${setor.id_setor}`)
+      avisarSucesso('Setor removido.')
+      await carregarDados()
+    } catch (err) {
+      tratarErro(err, 'Nao foi possivel remover o setor. Verifique se existem usuarios, cargos, categorias ou documentos vinculados.')
+    }
+  }
+
   const editarUsuario = (item) => {
     setUserEditando(item.id)
     setFormUser({
       nome: item.nome || '',
       email: item.email || '',
       senha: '',
-      cargo: item.cargo || '',
+      id_setor: item.id_setor || '',
+      id_cargo: item.id_cargo || '',
       nivel_acesso: item.nivel_acesso || 1,
     })
   }
@@ -260,7 +425,8 @@ export default function Gestao() {
     const payload = {
       nome: formUser.nome.trim(),
       email: formUser.email.trim(),
-      cargo: formUser.cargo.trim(),
+      id_setor: formUser.id_setor ? Number(formUser.id_setor) : null,
+      id_cargo: formUser.id_cargo ? Number(formUser.id_cargo) : null,
       nivel_acesso: Number(formUser.nivel_acesso),
     }
     if (!userEditando) payload.senha = formUser.senha
@@ -397,10 +563,20 @@ export default function Gestao() {
                           </p>
                           <h3 className="text-sm font-semibold text-gray-900 leading-snug">{doc.titulo}</h3>
                           <p className="text-xs text-gray-500 mt-1 line-clamp-2">{doc.resumo || 'Sem resumo cadastrado.'}</p>
+                          {(doc.cargo_alvo_nome || cargosPorId[doc.id_cargo]) && (
+                            <p className="text-xs text-gray-400 mt-2">
+                              Cargo-alvo: {doc.cargo_alvo_nome || cargosPorId[doc.id_cargo]}
+                            </p>
+                          )}
                         </div>
-                        <BotaoIcone title="Editar documento" onClick={() => editarDocumento(doc)}>
-                          <Pencil size={15} />
-                        </BotaoIcone>
+                        <div className="flex items-center gap-2">
+                          <BotaoIcone title="Editar documento" onClick={() => editarDocumento(doc)}>
+                            <Pencil size={15} />
+                          </BotaoIcone>
+                          <BotaoIcone title="Remover documento" onClick={() => removerDocumento(doc)}>
+                            <Trash2 size={15} />
+                          </BotaoIcone>
+                        </div>
                       </div>
                     </article>
                   ))}
@@ -447,6 +623,18 @@ export default function Gestao() {
                       className={textareaClasses('min-h-20')}
                       placeholder="Sintese curta para facilitar a busca"
                     />
+                  </Campo>
+                  <Campo label="Cargo-alvo">
+                    <select
+                      value={formDoc.id_cargo}
+                      onChange={(event) => setFormDoc({ ...formDoc, id_cargo: event.target.value })}
+                      className={inputClasses()}
+                    >
+                      <option value="">Sem cargo-alvo</option>
+                      {cargosDoSetorAtual.map((cargo) => (
+                        <option key={cargo.id_cargo} value={cargo.id_cargo}>{cargo.nome}</option>
+                      ))}
+                    </select>
                   </Campo>
                   <Campo label="Conteudo">
                     <textarea
@@ -533,6 +721,166 @@ export default function Gestao() {
             </>
           )}
 
+          {abaAtiva === 'cargos' && podeGerenciarTudo && (
+            <>
+              <section>
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-900">Cargos</h2>
+                  <span className="text-sm text-gray-400">{cargosFiltrados.length} itens</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {cargosFiltrados.map((cargo) => (
+                    <article key={cargo.id_cargo} className="rounded-lg border border-gray-100 bg-white p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="h-9 w-9 rounded-lg bg-teal-50 text-[#0f4c5c] flex items-center justify-center">
+                            <Briefcase size={16} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate">{cargo.nome}</p>
+                            <p className="text-xs text-gray-400 truncate">
+                              {cargo.setor_nome || setoresPorId[cargo.id_setor] || `Setor ${cargo.id_setor}`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <BotaoIcone title="Editar cargo" onClick={() => editarCargo(cargo)}>
+                            <Pencil size={15} />
+                          </BotaoIcone>
+                          <BotaoIcone title="Remover cargo" onClick={() => removerCargo(cargo)}>
+                            <Trash2 size={15} />
+                          </BotaoIcone>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <form onSubmit={salvarCargo} className="rounded-lg border border-gray-100 bg-white p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {cargoEditando ? 'Editar cargo' : 'Novo cargo'}
+                  </h2>
+                  {cargoEditando && (
+                    <BotaoIcone title="Cancelar edicao" onClick={limparFormularios}>
+                      <X size={15} />
+                    </BotaoIcone>
+                  )}
+                </div>
+                <div className="space-y-4">
+                  <Campo label="Nome">
+                    <input
+                      required
+                      value={formCargo.nome}
+                      onChange={(event) => setFormCargo({ ...formCargo, nome: event.target.value })}
+                      className={inputClasses()}
+                      placeholder="Ex: Vendedor Senior"
+                    />
+                  </Campo>
+                  <Campo label="Setor">
+                    <select
+                      required
+                      value={formCargo.id_setor}
+                      onChange={(event) => setFormCargo({ ...formCargo, id_setor: event.target.value })}
+                      className={inputClasses()}
+                    >
+                      <option value="">Selecione um setor</option>
+                      {setores.map((setor) => (
+                        <option key={setor.id_setor} value={setor.id_setor}>{setor.nome}</option>
+                      ))}
+                    </select>
+                  </Campo>
+                  <button
+                    disabled={salvando}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                  >
+                    <Plus size={15} />
+                    {salvando ? 'Salvando...' : 'Salvar cargo'}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+
+          {abaAtiva === 'setores' && podeGerenciarTudo && (
+            <>
+              <section>
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-900">Setores</h2>
+                  <span className="text-sm text-gray-400">{setoresFiltrados.length} itens</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {setoresFiltrados.map((setor) => (
+                    <article key={setor.id_setor} className="rounded-lg border border-gray-100 bg-white p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="h-9 w-9 rounded-lg bg-teal-50 text-[#0f4c5c] flex items-center justify-center">
+                            <Building2 size={16} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate">{setor.nome}</p>
+                            <p className="text-xs text-gray-400">ID {setor.id_setor}</p>
+                            {setor.descricao && (
+                              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{setor.descricao}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <BotaoIcone title="Editar setor" onClick={() => editarSetor(setor)}>
+                            <Pencil size={15} />
+                          </BotaoIcone>
+                          <BotaoIcone title="Remover setor" onClick={() => removerSetor(setor)}>
+                            <Trash2 size={15} />
+                          </BotaoIcone>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <form onSubmit={salvarSetor} className="rounded-lg border border-gray-100 bg-white p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {setorEditando ? 'Editar setor' : 'Novo setor'}
+                  </h2>
+                  {setorEditando && (
+                    <BotaoIcone title="Cancelar edicao" onClick={limparFormularios}>
+                      <X size={15} />
+                    </BotaoIcone>
+                  )}
+                </div>
+                <div className="space-y-4">
+                  <Campo label="Nome">
+                    <input
+                      required
+                      value={formSetor.nome}
+                      onChange={(event) => setFormSetor({ ...formSetor, nome: event.target.value })}
+                      className={inputClasses()}
+                      placeholder="Ex: Recursos Humanos"
+                    />
+                  </Campo>
+                  <Campo label="Descricao">
+                    <textarea
+                      value={formSetor.descricao}
+                      onChange={(event) => setFormSetor({ ...formSetor, descricao: event.target.value })}
+                      className={textareaClasses('min-h-24')}
+                      placeholder="Descreva o escopo e responsabilidades do setor"
+                    />
+                  </Campo>
+                  <button
+                    disabled={salvando}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                  >
+                    <Plus size={15} />
+                    {salvando ? 'Salvando...' : 'Salvar setor'}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+
           {abaAtiva === 'usuarios' && podeGerenciarTudo && (
             <>
               <section>
@@ -548,7 +896,10 @@ export default function Gestao() {
                           <h3 className="text-sm font-semibold text-gray-900 truncate">{item.nome}</h3>
                           <p className="text-xs text-gray-500 truncate">{item.email}</p>
                           <p className="text-xs text-gray-400 mt-1">
-                            {item.cargo || 'Sem cargo'} - nivel {item.nivel_acesso}
+                            {item.cargo_nome || cargosPorId[item.id_cargo] || 'Sem cargo'} - nivel {item.nivel_acesso}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            Setor: {item.setor_nome || setoresPorId[item.id_setor] || 'Sem setor'}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -608,13 +959,42 @@ export default function Gestao() {
                       />
                     </Campo>
                   )}
-                  <Campo label="Cargo">
-                    <input
-                      value={formUser.cargo}
-                      onChange={(event) => setFormUser({ ...formUser, cargo: event.target.value })}
+                  <Campo label="Setor">
+                    <select
+                      required
+                      value={formUser.id_setor}
+                      onChange={(event) => setFormUser({
+                        ...formUser,
+                        id_setor: event.target.value,
+                        id_cargo: '',
+                      })}
                       className={inputClasses()}
-                      placeholder="Ex: Analista de RH"
-                    />
+                    >
+                      <option value="">Selecione um setor</option>
+                      {setores.map((setor) => (
+                        <option key={setor.id_setor} value={setor.id_setor}>{setor.nome}</option>
+                      ))}
+                    </select>
+                  </Campo>
+                  <Campo label="Cargo">
+                    <select
+                      value={formUser.id_cargo}
+                      onChange={(event) => setFormUser({ ...formUser, id_cargo: event.target.value })}
+                      className={inputClasses()}
+                      disabled={!formUser.id_setor}
+                    >
+                      <option value="">
+                        {formUser.id_setor ? 'Sem cargo' : 'Selecione um setor primeiro'}
+                      </option>
+                      {cargosDoSetorDoUsuario.map((cargo) => (
+                        <option key={cargo.id_cargo} value={cargo.id_cargo}>{cargo.nome}</option>
+                      ))}
+                    </select>
+                    {formUser.id_setor && cargosDoSetorDoUsuario.length === 0 && (
+                      <span className="block text-xs text-amber-600 mt-1.5">
+                        Este setor ainda nao tem cargos cadastrados.
+                      </span>
+                    )}
                   </Campo>
                   <Campo label="Nivel de acesso">
                     <select

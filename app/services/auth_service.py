@@ -36,7 +36,7 @@ def registrar(dados: dict):
         "nome": dados["nome"],
         "email": dados["email"],
         "senha_hash": senha_hash,
-        "cargo": dados.get("cargo"),
+        "id_cargo": dados.get("id_cargo"),
         "nivel_acesso": dados.get("nivel_acesso", 1),
         "id_setor": dados["id_setor"],
     }

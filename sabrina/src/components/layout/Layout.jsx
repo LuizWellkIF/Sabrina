@@ -8,9 +8,11 @@ import api from '../../services/api'
 export default function Layout() {
   const { usuario } = useAuth()
   const [categorias, setCategorias] = useState([])
+  const [cargos, setCargos] = useState([])
 
   useEffect(() => {
     api.get('/categorias/').then(res => setCategorias(res.data)).catch(() => {})
+    api.get('/cargos/').then(res => setCargos(res.data)).catch(() => {})
   }, [])
 
   return (
@@ -24,13 +26,13 @@ export default function Layout() {
             <Bell size={18} />
           </button>
           <span className="text-sm text-gray-600 font-medium">
-            {usuario?.cargo}
+            {usuario?.cargo_nome}
           </span>
         </header>
 
         {/* Conteúdo */}
         <main className="flex-1 overflow-auto">
-          <Outlet context={{ categorias, setCategorias }} />
+          <Outlet context={{ categorias, setCategorias, cargos, setCargos }} />
         </main>
       </div>
     </div>
