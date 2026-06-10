@@ -7,7 +7,7 @@ def listar():
     res = (
         sb.table(TABLE)
         .select("id_setor, nome, descricao")
-        .order("id_setor", desc=True)
+        .order("id_setor", desc=False)
         .execute()
     )
     return res.data

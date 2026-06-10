@@ -31,7 +31,7 @@ export default function Login() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-[#0f4c5c] flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-[#7010C0] flex items-center justify-center">
             <BookOpen size={18} className="text-white" />
           </div>
           <span className="text-xl font-semibold text-gray-900 tracking-tight">Sabrina</span>
@@ -51,7 +51,7 @@ export default function Login() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="seu@email.com"
                 required
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#0f4c5c] focus:ring-2 focus:ring-[#0f4c5c]/10 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#7010C0] focus:ring-2 focus:ring-[#7010C0]/10 transition-all"
               />
             </div>
 
@@ -64,7 +64,7 @@ export default function Login() {
                   onChange={e => setSenha(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#0f4c5c] focus:ring-2 focus:ring-[#0f4c5c]/10 transition-all pr-10"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#7010C0] focus:ring-2 focus:ring-[#7010C0]/10 transition-all pr-10"
                 />
                 <button
                   type="button"
@@ -83,7 +83,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={carregando}
-              className="w-full bg-[#0f4c5c] text-white py-2.5 rounded-lg text-sm font-medium hover:bg-[#0d3f4d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full bg-[#7010C0] text-white py-2.5 rounded-lg text-sm font-medium hover:bg-[#0d3f4d] transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {carregando ? 'Entrando...' : 'Entrar'}
             </button>

@@ -462,7 +462,7 @@ export default function Gestao() {
   if (!podeGerenciarConteudo) {
     return (
       <div className="px-10 py-8 max-w-3xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestao</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestão</h1>
         <p className="text-sm text-gray-500">Seu perfil ainda nao tem permissao para criar ou editar conteudos.</p>
       </div>
     )
@@ -476,7 +476,7 @@ export default function Gestao() {
             <BookOpen size={15} />
             <span>Base de conhecimento do setor</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestao</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Gestão</h1>
           <p className="text-sm text-gray-500 mt-1">
             Crie e refine documentos, categorias e acessos para manter o conhecimento explicito.
           </p>

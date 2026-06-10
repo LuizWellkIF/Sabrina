@@ -18,7 +18,7 @@ function CardDocumento({ doc, onClick, agora }) {
       className="bg-white rounded-xl border border-gray-100 p-5 cursor-pointer hover:border-gray-200 hover:shadow-sm transition-all group"
     >
       <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center mb-4 group-hover:bg-teal-50 transition-colors">
-        <Search size={16} className="text-gray-400 group-hover:text-[#0f4c5c] transition-colors" />
+        <Search size={16} className="text-gray-400 group-hover:text-[#7010C0] transition-colors" />
       </div>
       {doc.categoria_nome && (
         <span className="inline-block text-xs font-medium text-[#1a8a6e] mb-2">
@@ -86,7 +86,7 @@ export default function Dashboard() {
           placeholder="O que você precisa saber agora?"
           value={busca}
           onChange={e => setBusca(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#0f4c5c] focus:ring-2 focus:ring-[#0f4c5c]/10 transition-all shadow-sm"
+          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#7010C0] focus:ring-2 focus:ring-[#7010C0]/10 transition-all shadow-sm"
         />
       </div>
 
@@ -99,7 +99,7 @@ export default function Dashboard() {
               onClick={() => setCategoriaSelecionada(null)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 !categoriaSelecionada
-                  ? 'bg-[#0f4c5c] text-white border-[#0f4c5c]'
+                  ? 'bg-[#7010C0] text-white border-[#7010C0]'
                   : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
               }`}
             >
@@ -113,7 +113,7 @@ export default function Dashboard() {
                 )}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   categoriaSelecionada === cat.id_categoria
-                    ? 'bg-[#0f4c5c] text-white border-[#0f4c5c]'
+                    ? 'bg-[#7010C0] text-white border-[#7010C0]'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -132,7 +132,7 @@ export default function Dashboard() {
 
       {carregando ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-6 h-6 border-2 border-[#0f4c5c] border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-[#7010C0] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : docsFiltrados.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
