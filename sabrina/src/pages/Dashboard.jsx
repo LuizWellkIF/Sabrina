@@ -6,8 +6,17 @@ import api from '../services/api'
 
 function CardDocumento({ doc, onClick, agora }) {
   const formatarData = (data) => {
-    const diff = Math.floor((agora - new Date(data)) / 86400000)
-    if (diff === 0) return 'Hoje'
+    if (!data) return 'Hoje'
+
+    const dataDoc = new Date(data)
+    if (Number.isNaN(dataDoc.getTime())) return 'Hoje'
+
+    const hoje = new Date(agora)
+    const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())
+    const inicioDataDoc = new Date(dataDoc.getFullYear(), dataDoc.getMonth(), dataDoc.getDate())
+    const diff = Math.floor((inicioHoje - inicioDataDoc) / 86400000)
+
+    if (diff <= 0) return 'Hoje'
     if (diff === 1) return 'há 1 dia'
     return `há ${diff} dias`
   }

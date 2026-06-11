@@ -42,9 +42,11 @@ def atualizar(id_doc):
     dados = request.get_json()
     if not dados:
         return jsonify({"erro": "Nenhum dado enviado"}), 400
-    doc, erro = documento_service.atualizar(id_doc, _setor_do_token(), dados)
+    editor_id = int(get_jwt_identity())
+    doc, erro = documento_service.atualizar(id_doc, _setor_do_token(), dados, editor_id)
     if erro:
-        return jsonify({"erro": erro}), 404
+        status = 400 if "campo" in erro else 404
+        return jsonify({"erro": erro}), status
     return jsonify(doc), 200
 
 @documentos_bp.delete("/<int:id_doc>")

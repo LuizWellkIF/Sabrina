@@ -6,7 +6,7 @@ def listar_por_setor(id_setor: int):
     sb = get_supabase()
     res = (
         sb.table(TABLE)
-        .select("id_doc, titulo, resumo, id_cargo, id_categoria, criador, ultima_att, data_criacao")
+        .select("id_doc, titulo, resumo, id_cargo, id_categoria, criador, ultimo_editor, ultima_att, data_criacao")
         .eq("id_setor", id_setor)
         .order("data_criacao", desc=True)
         .execute()

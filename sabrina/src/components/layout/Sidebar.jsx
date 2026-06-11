@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import {
   LayoutDashboard, Settings, TrendingUp, Zap, Phone,
-  Shield, HeartHandshake, Cog, LogOut, BookOpen
+  Shield, HeartHandshake, Cog, LogOut, BookOpen, Sparkles
 } from 'lucide-react'
 
 const iconeCategoria = {
@@ -46,10 +46,9 @@ export default function Sidebar({ categorias = [] }) {
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
-            `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-[#0f4c5c] text-white'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+              ? 'bg-[#0f4c5c] text-white'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`
           }
         >
@@ -57,12 +56,23 @@ export default function Sidebar({ categorias = [] }) {
           Meu painel
         </NavLink>
         <NavLink
+          to="/sabrina"
+          className={({ isActive }) =>
+            `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+              ? 'bg-[#0f4c5c] text-white'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            }`
+          }
+        >
+          <Sparkles size={16} />
+          Sabrina
+        </NavLink>
+        <NavLink
           to="/gestao"
           className={({ isActive }) =>
-            `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-0.5 ${
-              isActive
-                ? 'bg-[#0f4c5c] text-white'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-0.5 ${isActive
+              ? 'bg-[#0f4c5c] text-white'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`
           }
         >
@@ -85,10 +95,9 @@ export default function Sidebar({ categorias = [] }) {
                   key={cat.id_categoria}
                   to={`/categoria/${cat.id_categoria}`}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                      isActive
-                        ? 'text-[#0f4c5c] font-medium bg-teal-50'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
+                      ? 'text-[#0f4c5c] font-medium bg-teal-50'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`
                   }
                 >

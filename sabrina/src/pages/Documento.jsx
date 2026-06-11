@@ -6,6 +6,7 @@ import {
   CheckCircle,
   ChevronRight,
   MessageSquare,
+  PencilLine,
   Search,
   User,
 } from 'lucide-react'
@@ -110,6 +111,9 @@ export default function Documento() {
   const responsavel = doc.criador_nome || doc.autor_nome || (
     Number(doc.criador) === Number(usuario?.id) ? usuario?.nome : null
   )
+  const ultimoEditor = doc.ultimo_editor_nome || (
+    Number(doc.ultimo_editor) === Number(usuario?.id) ? usuario?.nome : null
+  )
 
   return (
     <div className="flex gap-8 px-10 py-7">
@@ -163,6 +167,12 @@ export default function Documento() {
               <div className="flex items-center gap-2">
                 <User size={15} className="text-gray-500" />
                 <span>Responsavel: <strong className="font-semibold text-gray-950">{responsavel}</strong></span>
+              </div>
+            )}
+            {ultimoEditor && (
+              <div className="flex items-center gap-2">
+                <PencilLine size={15} className="text-gray-500" />
+                <span>Ultima edicao: <strong className="font-semibold text-gray-950">{ultimoEditor}</strong></span>
               </div>
             )}
             {doc.cargo_alvo_nome && (
