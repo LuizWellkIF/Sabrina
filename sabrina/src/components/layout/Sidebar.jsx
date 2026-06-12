@@ -1,8 +1,9 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { useTheme } from '../../contexts/ThemeContext'
 import {
   LayoutDashboard, Settings, TrendingUp, Zap, Phone,
-  Shield, HeartHandshake, Cog, LogOut, BookOpen, Sparkles
+  Shield, HeartHandshake, Cog, LogOut, BookOpen, Sparkles, Book, Moon, Sun
 } from 'lucide-react'
 
 const iconeCategoria = {
@@ -18,6 +19,7 @@ const IconeDefault = BookOpen
 
 export default function Sidebar({ categorias = [] }) {
   const { usuario, logout } = useAuth()
+  const { modoEscuro, alternarTema } = useTheme()
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -33,8 +35,8 @@ export default function Sidebar({ categorias = [] }) {
     <aside className="w-60 min-h-screen bg-white border-r border-gray-100 flex flex-col">
       {/* Logo */}
       <div className="h-14 flex items-center px-4 border-b border-gray-100">
-        <div className="w-7 h-7 rounded-lg bg-[#0f4c5c] flex items-center justify-center mr-2">
-          <BookOpen size={14} className="text-white" />
+        <div className="w-7 h-7 rounded-lg bg-[#7010C0] flex items-center justify-center mr-2">
+          <Book size={14} className="text-white" />
         </div>
         <a href="/dashboard">
           <span className="text-sm font-bold text-gray-900">Sabrina</span>
@@ -47,7 +49,7 @@ export default function Sidebar({ categorias = [] }) {
           to="/dashboard"
           className={({ isActive }) =>
             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
-              ? 'bg-[#0f4c5c] text-white'
+              ? 'bg-[#7010C0] text-white'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`
           }
@@ -59,7 +61,7 @@ export default function Sidebar({ categorias = [] }) {
           to="/sabrina"
           className={({ isActive }) =>
             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
-              ? 'bg-[#0f4c5c] text-white'
+              ? 'bg-[#7010C0] text-white'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`
           }
@@ -71,7 +73,7 @@ export default function Sidebar({ categorias = [] }) {
           to="/gestao"
           className={({ isActive }) =>
             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-0.5 ${isActive
-              ? 'bg-[#0f4c5c] text-white'
+              ? 'bg-[#7010C0] text-white'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`
           }
@@ -96,7 +98,7 @@ export default function Sidebar({ categorias = [] }) {
                   to={`/categoria/${cat.id_categoria}`}
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
-                      ? 'text-[#0f4c5c] font-medium bg-teal-50'
+                      ? 'text-[#7010C0] font-medium bg-purple-50'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`
                   }
@@ -112,8 +114,19 @@ export default function Sidebar({ categorias = [] }) {
 
       {/* Usuário */}
       <div className="mt-auto border-t border-gray-100 p-3">
+        <button
+          type="button"
+          onClick={alternarTema}
+          className="mb-2 flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+          title={modoEscuro ? 'Ativar modo claro' : 'Ativar modo escuro'}
+        >
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-[#7010C0]">
+            {modoEscuro ? <Sun size={15} /> : <Moon size={15} />}
+          </span>
+          <span>{modoEscuro ? 'Modo claro' : 'Modo escuro'}</span>
+        </button>
         <div className="flex items-center gap-2.5 px-2 py-1.5">
-          <div className="w-8 h-8 rounded-full bg-[#0f4c5c] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-[#7010C0] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
             {iniciais}
           </div>
           <div className="flex-1 min-w-0">

@@ -1,9 +1,136 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
   margin: 0;
+  background: #f5f4ef;
+  color: #111827;
 }
 
 #root {
   min-height: 100vh;
+}
+
+.dark body {
+  background: #0f0d14;
+  color: #f5f3ff;
+}
+
+.dark .bg-white,
+.dark .bg-gray-50,
+.dark .bg-\[\#f5f4ef\],
+.dark .bg-\[\#f0ece5\],
+.dark .bg-\[\#fbfaf7\],
+.dark .bg-\[\#faf7f2\] {
+  background-color: #17131f;
+}
+
+.dark .bg-purple-50 {
+  background-color: #2a173d;
+}
+
+.dark .bg-red-50 {
+  background-color: #3b1016;
+}
+
+.dark .bg-amber-50 {
+  background-color: #33220b;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-\[\#ded6ca\],
+.dark .border-\[\#e8e0d6\] {
+  border-color: #2d2638;
+}
+
+.dark .border-purple-200 {
+  border-color: #553071;
+}
+
+.dark .border-red-100,
+.dark .border-red-200 {
+  border-color: #6f1d2a;
+}
+
+.dark .border-amber-300 {
+  border-color: #8a5a16;
+}
+
+.dark .text-gray-950,
+.dark .text-gray-900,
+.dark .text-\[\#07182c\] {
+  color: #f8f5ff;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #cfc7dc;
+}
+
+.dark .text-gray-400 {
+  color: #9e94ad;
+}
+
+.dark .text-gray-300 {
+  color: #82778f;
+}
+
+.dark .text-black-400 {
+  color: #cfc7dc;
+}
+
+.dark .text-amber-900 {
+  color: #fedb99;
+}
+
+.dark .text-red-600,
+.dark .text-red-700 {
+  color: #ff9aa8;
+}
+
+.dark .placeholder\:text-gray-400::placeholder,
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #8c829a;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #17131f;
+  color: #f8f5ff;
+  color-scheme: dark;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background-color: #211a2b;
+}
+
+.dark .hover\:border-gray-200:hover,
+.dark .hover\:border-gray-300:hover {
+  border-color: #4a3d5c;
+}
+
+.dark .hover\:text-gray-900:hover,
+.dark .hover\:text-gray-700:hover,
+.dark .hover\:text-gray-600:hover {
+  color: #f8f5ff;
+}
+
+.dark .from-\[\#C060F8\] {
+  --tw-gradient-from: #7010C0 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(112 16 192 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark .to-\[\#f0ece5\] {
+  --tw-gradient-to: #0f0d14 var(--tw-gradient-to-position);
 }

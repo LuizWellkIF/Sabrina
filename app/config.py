@@ -12,11 +12,19 @@ class Config:
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-    # Ollama
-    OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
-    OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
-    OLLAMA_EMBED_DIMENSIONS = 768  # nomic-embed-text
+    # Gemini
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+    GEMINI_FALLBACK_MODELS = [
+        model.strip()
+        for model in os.getenv(
+            "GEMINI_FALLBACK_MODELS",
+            "gemini-2.5-flash,gemini-2.0-flash,gemini-flash-latest,gemini-flash-lite-latest",
+        ).split(",")
+        if model.strip()
+    ]
+    GEMINI_EMBED_MODEL = os.getenv("GEMINI_EMBED_MODEL", "gemini-embedding-001")
+    GEMINI_EMBED_DIMENSIONS = 768
 
     # CORS — origens permitidas (ajuste conforme URL do React)
     CORS_ORIGINS = ["http://localhost:5173", "http://localhost:3000"]

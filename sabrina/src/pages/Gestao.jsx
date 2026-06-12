@@ -70,7 +70,7 @@ function Campo({ label, children }) {
 }
 
 function inputClasses() {
-  return 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-[#0f4c5c] focus:ring-2 focus:ring-[#0f4c5c]/10'
+  return 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-[#7010C0] focus:ring-2 focus:ring-[#7010C0]/10'
 }
 
 function textareaClasses(extra = '') {
@@ -102,6 +102,7 @@ export default function Gestao() {
 
   const podeGerenciarConteudo = Number(usuario?.nivel_acesso || 0) >= 5
   const podeGerenciarTudo = Number(usuario?.nivel_acesso || 0) >= 9
+  const podeGerenciarSuperAdmin = Number(usuario?.nivel_acesso || 0) >= 15
 
   const carregarDados = useCallback(async () => {
     setCarregando(true)
@@ -509,7 +510,7 @@ export default function Gestao() {
               }}
               className={`inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors ${
                 ativa
-                  ? 'bg-[#0f4c5c] text-white border-[#0f4c5c]'
+                  ? 'bg-[#7010C0] text-white border-[#7010C0]'
                   : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-900'
               }`}
             >
@@ -526,7 +527,7 @@ export default function Gestao() {
           value={busca}
           onChange={(event) => setBusca(event.target.value)}
           placeholder="Buscar na gestao"
-          className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-[#0f4c5c] focus:ring-2 focus:ring-[#0f4c5c]/10"
+          className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-[#7010C0] focus:ring-2 focus:ring-[#7010C0]/10"
         />
       </div>
 
@@ -534,7 +535,7 @@ export default function Gestao() {
         <div className={`mb-5 rounded-lg border px-4 py-3 text-sm ${
           erro
             ? 'border-red-200 bg-red-50 text-red-700'
-            : 'border-teal-200 bg-teal-50 text-[#0f4c5c]'
+            : 'border-purple-200 bg-purple-50 text-[#7010C0]'
         }`}>
           {erro || mensagem}
         </div>
@@ -542,7 +543,7 @@ export default function Gestao() {
 
       {carregando ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-6 h-6 border-2 border-[#0f4c5c] border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-[#7010C0] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-5 items-start">
@@ -558,7 +559,7 @@ export default function Gestao() {
                     <article key={doc.id_doc} className="rounded-lg border border-gray-100 bg-white p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-xs font-medium text-[#1a8a6e] mb-1">
+                          <p className="text-xs font-medium text-[#C060F8] mb-1">
                             {categoriasPorId[doc.id_categoria] || 'Sem categoria'}
                           </p>
                           <h3 className="text-sm font-semibold text-gray-900 leading-snug">{doc.titulo}</h3>
@@ -647,7 +648,7 @@ export default function Gestao() {
                   </Campo>
                   <button
                     disabled={salvando}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#7010C0] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#C060F8] disabled:opacity-60"
                   >
                     <Check size={15} />
                     {salvando ? 'Salvando...' : 'Salvar documento'}
@@ -669,7 +670,7 @@ export default function Gestao() {
                     <article key={cat.id_categoria} className="rounded-lg border border-gray-100 bg-white p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-9 w-9 rounded-lg bg-teal-50 text-[#0f4c5c] flex items-center justify-center">
+                          <div className="h-9 w-9 rounded-lg bg-purple-50 text-[#7010C0] flex items-center justify-center">
                             <Folder size={16} />
                           </div>
                           <p className="text-sm font-semibold text-gray-900 truncate">{cat.nome}</p>
@@ -711,7 +712,7 @@ export default function Gestao() {
                   </Campo>
                   <button
                     disabled={salvando}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#7010C0] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#C060F8] disabled:opacity-60"
                   >
                     <Plus size={15} />
                     {salvando ? 'Salvando...' : 'Salvar categoria'}
@@ -733,7 +734,7 @@ export default function Gestao() {
                     <article key={cargo.id_cargo} className="rounded-lg border border-gray-100 bg-white p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-9 w-9 rounded-lg bg-teal-50 text-[#0f4c5c] flex items-center justify-center">
+                          <div className="h-9 w-9 rounded-lg bg-purple-50 text-[#7010C0] flex items-center justify-center">
                             <Briefcase size={16} />
                           </div>
                           <div className="min-w-0">
@@ -793,7 +794,7 @@ export default function Gestao() {
                   </Campo>
                   <button
                     disabled={salvando}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#7010C0] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#C060F8] disabled:opacity-60"
                   >
                     <Plus size={15} />
                     {salvando ? 'Salvando...' : 'Salvar cargo'}
@@ -815,7 +816,7 @@ export default function Gestao() {
                     <article key={setor.id_setor} className="rounded-lg border border-gray-100 bg-white p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-9 w-9 rounded-lg bg-teal-50 text-[#0f4c5c] flex items-center justify-center">
+                          <div className="h-9 w-9 rounded-lg bg-purple-50 text-[#7010C0] flex items-center justify-center">
                             <Building2 size={16} />
                           </div>
                           <div className="min-w-0">
@@ -871,7 +872,7 @@ export default function Gestao() {
                   </Campo>
                   <button
                     disabled={salvando}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#7010C0] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#C060F8] disabled:opacity-60"
                   >
                     <Plus size={15} />
                     {salvando ? 'Salvando...' : 'Salvar setor'}
@@ -1005,11 +1006,14 @@ export default function Gestao() {
                       <option value={1}>1 - Leitura</option>
                       <option value={5}>5 - Conteudo</option>
                       <option value={9}>9 - Administracao</option>
+                      {podeGerenciarSuperAdmin && (
+                        <option value={15}>15 - Super admin</option>
+                      )}
                     </select>
                   </Campo>
                   <button
                     disabled={salvando}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#0f4c5c] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#0d3f4d] disabled:opacity-60"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#7010C0] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#C060F8] disabled:opacity-60"
                   >
                     <Check size={15} />
                     {salvando ? 'Salvando...' : 'Salvar usuario'}
