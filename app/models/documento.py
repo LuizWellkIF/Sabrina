@@ -6,7 +6,7 @@ def listar_por_setor(id_setor: int):
     sb = get_supabase()
     res = (
         sb.table(TABLE)
-        .select("id_doc, titulo, resumo, id_cargo, id_categoria, criador, ultima_att, data_criacao")
+        .select("id_doc, titulo, resumo, id_cargo, id_categoria, criador, ultimo_editor, ultima_att, data_criacao")
         .eq("id_setor", id_setor)
         .order("data_criacao", desc=True)
         .execute()
@@ -44,6 +44,31 @@ def atualizar(id_doc: int, id_setor: int, dados: dict):
 def deletar(id_doc: int, id_setor: int):
     sb = get_supabase()
     sb.table(TABLE).delete().eq("id_doc", id_doc).eq("id_setor", id_setor).execute()
+
+def listar_conteudos_por_setor(id_setor: int, limite: int = 8):
+    sb = get_supabase()
+    res = (
+        sb.table(TABLE)
+        .select("id_doc, titulo, resumo, conteudo, id_cargo, id_categoria, ultima_att, data_criacao")
+        .eq("id_setor", id_setor)
+        .order("ultima_att", desc=True)
+        .limit(limite)
+        .execute()
+    )
+    return res.data
+
+def listar_por_categoria(id_setor: int, id_categoria: int, limite: int = 8):
+    sb = get_supabase()
+    res = (
+        sb.table(TABLE)
+        .select("id_doc, titulo, resumo, conteudo, id_cargo, id_categoria, ultima_att, data_criacao")
+        .eq("id_setor", id_setor)
+        .eq("id_categoria", id_categoria)
+        .order("ultima_att", desc=True)
+        .limit(limite)
+        .execute()
+    )
+    return res.data
 
 def buscar_por_similaridade(embedding: list, id_setor: int, limite: int = 5):
     """

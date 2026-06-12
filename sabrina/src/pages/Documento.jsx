@@ -6,6 +6,7 @@ import {
   CheckCircle,
   ChevronRight,
   MessageSquare,
+  PencilLine,
   Search,
   User,
 } from 'lucide-react'
@@ -46,7 +47,7 @@ function renderizarConteudo(conteudo) {
     if (linha.match(/^[-*] /)) {
       return (
         <div key={i} className="flex items-start gap-2 my-1 ml-4">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#1a8a6e] mt-2 flex-shrink-0" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C060F8] mt-2 flex-shrink-0" />
           <p className="text-sm text-gray-700 leading-relaxed">{linha.replace(/^[-*] /, '')}</p>
         </div>
       )
@@ -98,7 +99,7 @@ export default function Documento() {
   if (carregando) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#0f4c5c] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#C060F8] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -109,6 +110,9 @@ export default function Documento() {
   const categoriaNome = doc.categoria_nome || categoriasPorId[doc.id_categoria]
   const responsavel = doc.criador_nome || doc.autor_nome || (
     Number(doc.criador) === Number(usuario?.id) ? usuario?.nome : null
+  )
+  const ultimoEditor = doc.ultimo_editor_nome || (
+    Number(doc.ultimo_editor) === Number(usuario?.id) ? usuario?.nome : null
   )
 
   return (
@@ -124,17 +128,17 @@ export default function Documento() {
               }
             }}
             placeholder="Buscar processos, scripts, politicas..."
-            className="w-full rounded-xl border border-[#e8e0d6] bg-[#faf7f2] py-3.5 pl-11 pr-4 text-sm text-gray-700 shadow-sm outline-none transition-all placeholder:text-gray-500 focus:border-[#0f4c5c] focus:ring-2 focus:ring-[#0f4c5c]/10"
+            className="w-full rounded-xl border border-[#e8e0d6] bg-[#faf7f2] py-3.5 pl-11 pr-4 text-sm text-gray-700 shadow-sm outline-none transition-all placeholder:text-gray-500 focus:border-[#C060F8] focus:ring-2 focus:ring-[#C060F8]/10"
           />
         </div>
 
         <header className="border-b border-[#ded6ca] pb-8 mb-7">
           <div className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500 mb-7">
-            <Link to="/dashboard" className="hover:text-[#0f4c5c] transition-colors">Base</Link>
+            <Link to="/dashboard" className="hover:text-[#C060F8] transition-colors">Base</Link>
             {categoriaNome && (
               <>
                 <ChevronRight size={14} />
-                <Link to="/dashboard" className="hover:text-[#0f4c5c] transition-colors">{categoriaNome}</Link>
+                <Link to="/dashboard" className="hover:text-[#C060F8] transition-colors">{categoriaNome}</Link>
               </>
             )}
             <ChevronRight size={14} />
@@ -165,6 +169,12 @@ export default function Documento() {
                 <span>Responsavel: <strong className="font-semibold text-gray-950">{responsavel}</strong></span>
               </div>
             )}
+            {ultimoEditor && (
+              <div className="flex items-center gap-2">
+                <PencilLine size={15} className="text-gray-500" />
+                <span>Ultima edicao: <strong className="font-semibold text-gray-950">{ultimoEditor}</strong></span>
+              </div>
+            )}
             {doc.cargo_alvo_nome && (
               <div className="flex items-center gap-2">
                 <Briefcase size={15} className="text-gray-500" />
@@ -183,8 +193,8 @@ export default function Documento() {
             onClick={() => setMarcadoLido(true)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               marcadoLido
-                ? 'bg-teal-50 text-[#0f4c5c] border border-teal-200'
-                : 'bg-[#0f4c5c] text-white hover:bg-[#0d3f4d]'
+                ? 'bg-purple-50 text-[#C060F8] border border-purple-200'
+                : 'bg-[#C060F8] text-white hover:bg-[#7010C0]'
             }`}
           >
             <CheckCircle size={15} />
@@ -206,7 +216,7 @@ export default function Documento() {
                 <a
                   key={secao.id}
                   href={`#${secao.id}`}
-                  className="block text-xs text-gray-500 hover:text-[#0f4c5c] transition-colors py-0.5 leading-relaxed"
+                  className="block text-xs text-gray-500 hover:text-[#7010C0] transition-colors py-0.5 leading-relaxed"
                   style={{ paddingLeft: secao.nivel > 1 ? `${(secao.nivel - 1) * 12}px` : '0' }}
                 >
                   {i + 1}. {secao.texto}

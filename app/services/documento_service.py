@@ -19,6 +19,10 @@ def buscar(id_doc: int, id_setor: int):
         criador = usuario_model.buscar_por_id(doc["criador"])
         if criador:
             doc["criador_nome"] = criador.get("nome")
+    if doc.get("ultimo_editor"):
+        editor = usuario_model.buscar_por_id(doc["ultimo_editor"])
+        if editor:
+            doc["ultimo_editor_nome"] = editor.get("nome")
     if doc.get("id_cargo"):
         cargo = cargo_model.buscar_por_id(doc["id_cargo"], id_setor)
         doc["cargo_alvo_nome"] = cargo.get("nome") if cargo else None
@@ -37,14 +41,21 @@ def criar(dados: dict, criador_id: int, id_setor: int):
         "id_categoria": dados.get("id_categoria"),
         "id_setor": id_setor,
         "criador": criador_id,
+        "ultimo_editor": criador_id,
     }
     if embedding is not None:
         novo["embedding"] = embedding
     doc = documento_model.criar(novo)
     return doc, None
 
-def atualizar(id_doc: int, id_setor: int, dados: dict):
-    atualizacao = {**dados, "ultima_att": datetime.now(timezone.utc).isoformat()}
+def atualizar(id_doc: int, id_setor: int, dados: dict, editor_id: int):
+    campos_editaveis = {"titulo", "conteudo", "resumo", "id_cargo", "id_categoria"}
+    atualizacao = {k: v for k, v in dados.items() if k in campos_editaveis}
+    if not atualizacao:
+        return None, "Nenhum campo editavel enviado"
+
+    atualizacao["ultima_att"] = datetime.now(timezone.utc).isoformat()
+    atualizacao["ultimo_editor"] = editor_id
 
     # Regenera embedding se o conteúdo foi alterado
     if "conteudo" in dados or "titulo" in dados:

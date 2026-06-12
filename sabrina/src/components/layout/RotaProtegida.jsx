@@ -7,7 +7,7 @@ export default function RotaProtegida({ children }) {
   if (carregando) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f5f4ef]">
-        <div className="w-6 h-6 border-2 border-[#0f4c5c] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#7010C0] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }

@@ -26,6 +26,7 @@ def registrar():
         if not dados or not dados.get(campo):
             return jsonify({"erro": f"Campo obrigatório ausente: {campo}"}), 400
 
+    dados["nivel_acesso"] = 1
     usuario, erro = auth_service.registrar(dados)
     if erro:
         return jsonify({"erro": erro}), 409
