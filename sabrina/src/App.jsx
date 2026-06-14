@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Documento from './pages/Documento'
+import Categoria from './pages/Categoria'
 import Gestao from './pages/Gestao'
 import SabrinaIA from './pages/SabrinaIA'
 
@@ -29,6 +30,7 @@ export default function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="sabrina" element={<SabrinaIA />} />
               <Route path="gestao" element={<Gestao />} />
+              <Route path="categoria/:id" element={<Categoria />} />
               <Route path="documento/:id" element={<Documento />} />
             </Route>
           </Routes>
