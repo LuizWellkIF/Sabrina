@@ -107,7 +107,7 @@ export default function Categoria() {
 
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">Documentos da categoria</h2>
-        <span className="text-sm text-gray-400">{docsFiltrados.length} conteudos</span>
+        <span className="text-sm text-gray-400">{docsFiltrados.length} conteúdos</span>
       </div>
 
       {carregando ? (
@@ -118,7 +118,7 @@ export default function Categoria() {
         <div className="rounded-xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center">
           <p className="text-sm font-medium text-gray-600">Nenhum documento encontrado.</p>
           <p className="mt-1 text-xs text-gray-400">
-            Quando houver documentos vinculados a esta categoria, eles aparecerao aqui.
+            Quando houver documentos vinculados a esta categoria, eles aparecerão aqui.
           </p>
         </div>
       ) : (

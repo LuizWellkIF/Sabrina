@@ -1,12 +1,14 @@
 from datetime import datetime, timezone
-from app.models import documento as documento_model
+
 from app.models import cargo as cargo_model
+from app.models import documento as documento_model
 from app.models import usuario as usuario_model
 from app.services.agente_service import gerar_embedding
 
 def listar(id_setor: int):
     docs = documento_model.listar_por_setor(id_setor)
     cargos = {c["id_cargo"]: c["nome"] for c in cargo_model.listar_por_setor(id_setor)}
+
     for doc in docs:
         doc["cargo_alvo_nome"] = cargos.get(doc.get("id_cargo"))
     return docs
@@ -14,7 +16,8 @@ def listar(id_setor: int):
 def buscar(id_doc: int, id_setor: int):
     doc = documento_model.buscar_por_id(id_doc, id_setor)
     if not doc:
-        return None, "Documento não encontrado ou sem permissão"
+        return None, "Documento nao encontrado ou sem permissao"
+
     if doc.get("criador"):
         criador = usuario_model.buscar_por_id(doc["criador"])
         if criador:
@@ -29,7 +32,6 @@ def buscar(id_doc: int, id_setor: int):
     return doc, None
 
 def criar(dados: dict, criador_id: int, id_setor: int):
-    # Gera embedding do conteúdo para busca semântica
     texto_para_embed = f"{dados.get('titulo', '')} {dados.get('conteudo', '')}"
     embedding = gerar_embedding(texto_para_embed)
 
@@ -57,7 +59,6 @@ def atualizar(id_doc: int, id_setor: int, dados: dict, editor_id: int):
     atualizacao["ultima_att"] = datetime.now(timezone.utc).isoformat()
     atualizacao["ultimo_editor"] = editor_id
 
-    # Regenera embedding se o conteúdo foi alterado
     if "conteudo" in dados or "titulo" in dados:
         doc_atual, _ = buscar(id_doc, id_setor)
         if doc_atual:
@@ -69,7 +70,7 @@ def atualizar(id_doc: int, id_setor: int, dados: dict, editor_id: int):
 
     doc = documento_model.atualizar(id_doc, id_setor, atualizacao)
     if not doc:
-        return None, "Documento não encontrado ou sem permissão"
+        return None, "Documento nao encontrado ou sem permissao"
     return doc, None
 
 def deletar(id_doc: int, id_setor: int):

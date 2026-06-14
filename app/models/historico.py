@@ -24,3 +24,24 @@ def listar_por_usuario(id_user: int, limite: int = 20):
         .execute()
     )
     return res.data
+
+def deletar_por_id(id_consulta: int, id_user: int):
+    sb = get_supabase()
+    res = (
+        sb.table(TABLE)
+        .delete()
+        .eq("id_consulta", id_consulta)
+        .eq("id_user", id_user)
+        .execute()
+    )
+    return res.data
+
+def deletar_por_usuario(id_user: int):
+    sb = get_supabase()
+    res = (
+        sb.table(TABLE)
+        .delete()
+        .eq("id_user", id_user)
+        .execute()
+    )
+    return res.data

@@ -187,24 +187,6 @@ export default function Documento() {
         <div className="prose-sm max-w-none">
           {renderizarConteudo(doc.conteudo)}
         </div>
-
-        <div className="flex items-center gap-3 mt-10 pt-6 border-t border-gray-100">
-          <button
-            onClick={() => setMarcadoLido(true)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              marcadoLido
-                ? 'bg-purple-50 text-[#C060F8] border border-purple-200'
-                : 'bg-[#C060F8] text-white hover:bg-[#7010C0]'
-            }`}
-          >
-            <CheckCircle size={15} />
-            {marcadoLido ? 'Marcado como lido' : 'Marcar como lido'}
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 border border-gray-200 hover:border-gray-300 transition-colors">
-            <MessageSquare size={15} />
-            Deixar feedback
-          </button>
-        </div>
       </div>
 
       {secoes.length > 0 && (

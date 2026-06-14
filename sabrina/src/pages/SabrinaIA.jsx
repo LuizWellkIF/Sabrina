@@ -8,6 +8,7 @@ import {
   History,
   Loader2,
   Sparkles,
+  Trash2,
   User,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
@@ -141,6 +142,7 @@ export default function SabrinaIA() {
   const [historico, setHistorico] = useState([])
   const [pergunta, setPergunta] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [excluindoHistorico, setExcluindoHistorico] = useState(false)
   const [erro, setErro] = useState('')
   const fimRef = useRef(null)
 
@@ -170,6 +172,38 @@ export default function SabrinaIA() {
   const carregarHistorico = async () => {
     const res = await api.get('/agente/historico?limite=8')
     setHistorico(res.data || [])
+  }
+
+  const excluirRegistroHistorico = async (idConsulta) => {
+    if (excluindoHistorico) return
+    setExcluindoHistorico(true)
+    setErro('')
+
+    try {
+      await api.delete(`/agente/historico/${idConsulta}`)
+      setHistorico((atuais) => atuais.filter((item) => item.id_consulta !== idConsulta))
+    } catch (err) {
+      setErro(err.response?.data?.erro || 'Nao foi possivel remover este registro.')
+    } finally {
+      setExcluindoHistorico(false)
+    }
+  }
+
+  const limparHistorico = async () => {
+    if (excluindoHistorico || historico.length === 0) return
+    if (!window.confirm('Apagar todo o historico de conversas com a Sabrina?')) return
+
+    setExcluindoHistorico(true)
+    setErro('')
+
+    try {
+      await api.delete('/agente/historico')
+      setHistorico([])
+    } catch (err) {
+      setErro(err.response?.data?.erro || 'Nao foi possivel limpar o historico.')
+    } finally {
+      setExcluindoHistorico(false)
+    }
   }
 
   const enviarPergunta = async (texto = pergunta) => {
@@ -300,7 +334,19 @@ export default function SabrinaIA() {
                 <p className="text-xs text-gray-400">Ultimas consultas</p>
               </div>
             </div>
-            <Bot size={16} className="text-gray-300" />
+            {historico.length > 0 ? (
+              <button
+                type="button"
+                onClick={limparHistorico}
+                disabled={excluindoHistorico}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white disabled:opacity-50"
+                title="Limpar historico"
+              >
+                <Trash2 size={14} />
+              </button>
+            ) : (
+              <Bot size={16} className="text-gray-300" />
+            )}
           </div>
 
           {historico.length === 0 ? (
@@ -311,9 +357,20 @@ export default function SabrinaIA() {
             <div className="space-y-3">
               {historico.map((item) => (
                 <article key={item.id_consulta} className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0">
-                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mb-1.5">
-                    <Clock size={11} />
-                    {formatarData(item.created_at)}
+                  <div className="mb-1.5 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                      <Clock size={11} />
+                      {formatarData(item.created_at)}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => excluirRegistroHistorico(item.id_consulta)}
+                      disabled={excluindoHistorico}
+                      className="inline-flex h-6 w-6 items-center justify-center rounded-md text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+                      title="Excluir registro"
+                    >
+                      <Trash2 size={12} />
+                    </button>
                   </div>
                   <p className="text-xs font-semibold text-gray-900 line-clamp-2">{item.pesquisa}</p>
                   <p className="mt-1 text-xs text-gray-500 line-clamp-3">{item.resposta}</p>
