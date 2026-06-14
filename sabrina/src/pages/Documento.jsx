@@ -138,7 +138,7 @@ export default function Documento() {
             {categoriaNome && (
               <>
                 <ChevronRight size={14} />
-                <Link to="/dashboard" className="hover:text-[#C060F8] transition-colors">{categoriaNome}</Link>
+                <Link to={`/categoria/${doc.id_categoria}`} className="hover:text-[#C060F8] transition-colors">{categoriaNome}</Link>
               </>
             )}
             <ChevronRight size={14} />
