@@ -51,10 +51,10 @@ export default function Login() {
 
         <div className="w-full max-w-sm justify-self-center lg:justify-self-end">
           <div className="flex items-center justify-center gap-2.5 mb-8">
-            <div className="w-9 h-9 rounded-xl bg-[#7010C0] flex items-center justify-center">
-              <BookOpen size={18} className="text-white" />
+            <div className="w-15 h-15 rounded-xl bg-[#7010C0] flex items-center justify-center">
+              <BookOpen size={24} className="text-white" />
             </div>
-            <span className="text-xl font-semibold text-gray-900 tracking-tight">Sabrina</span>
+            <span className="text-6xl font-semibold text-gray-900 tracking-tight">Sabrina</span>
           </div>
 
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">

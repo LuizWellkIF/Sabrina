@@ -32,3 +32,19 @@ def historico():
     limite = request.args.get("limite", 20, type=int)
     registros = historico_model.listar_por_usuario(id_user, limite)
     return jsonify(registros), 200
+
+@agente_bp.delete("/historico")
+@jwt_required()
+def limpar_historico():
+    id_user = int(get_jwt_identity())
+    historico_model.deletar_por_usuario(id_user)
+    return jsonify({"mensagem": "Historico removido"}), 200
+
+@agente_bp.delete("/historico/<int:id_consulta>")
+@jwt_required()
+def deletar_historico(id_consulta):
+    id_user = int(get_jwt_identity())
+    removidos = historico_model.deletar_por_id(id_consulta, id_user)
+    if not removidos:
+        return jsonify({"erro": "Registro nao encontrado"}), 404
+    return jsonify({"mensagem": "Registro removido"}), 200

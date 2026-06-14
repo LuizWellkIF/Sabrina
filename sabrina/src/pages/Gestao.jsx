@@ -124,7 +124,7 @@ export default function Gestao() {
       if (usersRes) setUsuarios(usersRes.data || [])
       if (setoresRes) setSetores(setoresRes.data || [])
     } catch (err) {
-      setErro(err.response?.data?.erro || 'Nao foi possivel carregar os dados de gestao.')
+      setErro(err.response?.data?.erro || 'Não foi possivel carregar os dados de gestão.')
     } finally {
       setCarregando(false)
     }
@@ -463,7 +463,7 @@ export default function Gestao() {
   if (!podeGerenciarConteudo) {
     return (
       <div className="px-10 py-8 max-w-3xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestao</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestão</h1>
         <p className="text-sm text-gray-500">Seu perfil ainda nao tem permissao para criar ou editar conteudos.</p>
       </div>
     )
@@ -477,7 +477,7 @@ export default function Gestao() {
             <BookOpen size={15} />
             <span>Base de conhecimento do setor</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestao</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Gestão</h1>
           <p className="text-sm text-gray-500 mt-1">
             Crie e refine documentos, categorias e acessos para manter o conhecimento explicito.
           </p>
@@ -562,6 +562,12 @@ export default function Gestao() {
                           <p className="text-xs font-medium text-[#C060F8] mb-1">
                             {categoriasPorId[doc.id_categoria] || 'Sem categoria'}
                           </p>
+                          {doc.lido && (
+                            <span className="mb-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-600">
+                              <Check size={12} />
+                              Lido
+                            </span>
+                          )}
                           <h3 className="text-sm font-semibold text-gray-900 leading-snug">{doc.titulo}</h3>
                           <p className="text-xs text-gray-500 mt-1 line-clamp-2">{doc.resumo || 'Sem resumo cadastrado.'}</p>
                           {(doc.cargo_alvo_nome || cargosPorId[doc.id_cargo]) && (
