@@ -27,4 +27,11 @@ class Config:
     GEMINI_EMBED_DIMENSIONS = 768
 
     # CORS — origens permitidas (ajuste conforme URL do React)
-    CORS_ORIGINS = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS = [
+        origem.strip()
+        for origem in os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:5173,http://localhost:3000",
+        ).split(",")
+        if origem.strip()
+    ]
