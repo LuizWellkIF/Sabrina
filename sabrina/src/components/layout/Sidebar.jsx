@@ -10,6 +10,7 @@ import {
   Shield,
   Sparkles,
   TrendingUp,
+  X,
   Zap,
 } from 'lucide-react'
 
@@ -24,21 +25,40 @@ const iconeCategoria = {
 
 const IconeDefault = BookOpen
 
-export default function Sidebar({ categorias = [] }) {
+export default function Sidebar({ categorias = [], aberta = false, onFechar }) {
+  const handleNavegar = () => {
+    onFechar?.()
+  }
+
   return (
-    <aside className="w-60 min-h-screen bg-white border-r border-gray-100 flex flex-col">
-      <a href="/dashboard" className="block">
+    <aside
+      className={`fixed inset-y-0 left-0 z-40 flex w-60 min-h-screen flex-col border-r border-gray-100 bg-white shadow-xl transition-transform duration-200 md:static md:z-auto md:translate-x-0 md:shadow-none ${aberta ? 'translate-x-0' : '-translate-x-full'
+        }`}
+    >
+      <a href="/dashboard" className="block" onClick={handleNavegar}>
         <div className="h-14 flex items-center px-4 border-b border-gray-100">
           <div className="w-7 h-7 rounded-lg bg-[#7010C0] flex items-center justify-center mr-2">
             <Book size={14} className="text-white" />
           </div>
           <span className="text-sm font-bold text-gray-900">Sabrina</span>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault()
+              onFechar?.()
+            }}
+            className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 md:hidden"
+            title="Fechar menu"
+          >
+            <X size={18} />
+          </button>
         </div>
       </a>
 
       <nav className="px-3 pt-4 pb-2">
         <NavLink
           to="/dashboard"
+          onClick={handleNavegar}
           className={({ isActive }) =>
             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
               ? 'bg-[#7010C0] text-white'
@@ -51,6 +71,7 @@ export default function Sidebar({ categorias = [] }) {
         </NavLink>
         <NavLink
           to="/sabrina"
+          onClick={handleNavegar}
           className={({ isActive }) =>
             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
               ? 'bg-[#7010C0] text-white'
@@ -63,6 +84,7 @@ export default function Sidebar({ categorias = [] }) {
         </NavLink>
         <NavLink
           to="/gestao"
+          onClick={handleNavegar}
           className={({ isActive }) =>
             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-0.5 ${isActive
               ? 'bg-[#7010C0] text-white'
@@ -87,6 +109,7 @@ export default function Sidebar({ categorias = [] }) {
                 <NavLink
                   key={cat.id_categoria}
                   to={`/categoria/${cat.id_categoria}`}
+                  onClick={handleNavegar}
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
                       ? 'text-[#7010C0] font-medium bg-purple-50'
