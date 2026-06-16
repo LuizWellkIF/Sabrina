@@ -896,30 +896,36 @@ export default function Gestao() {
                   <span className="text-sm text-gray-400">{usuariosFiltrados.length} itens</span>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {usuariosFiltrados.map((item) => (
-                    <article key={item.id} className="rounded-lg border border-gray-100 bg-white p-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="text-sm font-semibold text-gray-900 truncate">{item.nome}</h3>
-                          <p className="text-xs text-gray-500 truncate">{item.email}</p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {item.cargo_nome || cargosPorId[item.id_cargo] || 'Sem cargo'} - nivel {item.nivel_acesso}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Setor: {item.setor_nome || setoresPorId[item.id_setor] || 'Sem setor'}
-                          </p>
+                  {usuariosFiltrados.map((item) => {
+                    const usuarioAtual = Number(item.id) === Number(usuario?.id)
+
+                    return (
+                      <article key={item.id} className="rounded-lg border border-gray-100 bg-white p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="text-sm font-semibold text-gray-900 truncate">{item.nome}</h3>
+                            <p className="text-xs text-gray-500 truncate">{item.email}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {item.cargo_nome || cargosPorId[item.id_cargo] || 'Sem cargo'} - nivel {item.nivel_acesso}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              Setor: {item.setor_nome || setoresPorId[item.id_setor] || 'Sem setor'}
+                            </p>
+                          </div>
+                          {!usuarioAtual && (
+                            <div className="flex items-center gap-2">
+                              <BotaoIcone title="Editar usuario" onClick={() => editarUsuario(item)}>
+                                <Pencil size={15} />
+                              </BotaoIcone>
+                              <BotaoIcone title="Remover usuario" onClick={() => removerUsuario(item)}>
+                                <Trash2 size={15} />
+                              </BotaoIcone>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <BotaoIcone title="Editar usuario" onClick={() => editarUsuario(item)}>
-                            <Pencil size={15} />
-                          </BotaoIcone>
-                          <BotaoIcone title="Remover usuario" onClick={() => removerUsuario(item)}>
-                            <Trash2 size={15} />
-                          </BotaoIcone>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
+                      </article>
+                    )
+                  })}
                 </div>
               </section>
 

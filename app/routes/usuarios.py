@@ -20,6 +20,10 @@ def _nivel_atual():
             return int(usuario.get("nivel_acesso", 0))
     return int(get_jwt().get("nivel_acesso", 0))
 
+def _id_usuario_atual():
+    user_id = get_jwt_identity()
+    return int(user_id) if user_id else None
+
 def _validar_nivel_solicitado(nivel):
     try:
         nivel = int(nivel)
@@ -35,6 +39,8 @@ def _validar_nivel_solicitado(nivel):
     return nivel, None
 
 def _pode_manipular_usuario(usuario):
+    if int(usuario.get("id", 0)) == _id_usuario_atual():
+        return False
     if _nivel_atual() >= NIVEL_SUPER_ADMIN:
         return True
     return int(usuario.get("nivel_acesso", 0)) < NIVEL_SUPER_ADMIN
@@ -92,6 +98,8 @@ def atualizar(id_usuario):
     usuario_atual = usuario_model.buscar_por_id(id_usuario)
     if not usuario_atual:
         return jsonify({"erro": "Usuario nao encontrado ou sem permissao"}), 404
+    if int(usuario_atual.get("id", 0)) == _id_usuario_atual():
+        return jsonify({"erro": "Nao e permitido alterar o proprio usuario"}), 403
     if not _pode_manipular_usuario(usuario_atual):
         return jsonify({"erro": "Apenas super administradores podem alterar usuarios nivel 15"}), 403
 
@@ -124,6 +132,8 @@ def deletar(id_usuario):
     usuario = usuario_model.buscar_por_id(id_usuario)
     if not usuario:
         return jsonify({"erro": "Usuario nao encontrado ou sem permissao"}), 404
+    if int(usuario.get("id", 0)) == _id_usuario_atual():
+        return jsonify({"erro": "Nao e permitido remover o proprio usuario"}), 403
     if not _pode_manipular_usuario(usuario):
         return jsonify({"erro": "Apenas super administradores podem remover usuarios nivel 15"}), 403
 
